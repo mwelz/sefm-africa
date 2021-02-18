@@ -7,8 +7,9 @@
 #' -------------------------------------------------------------------
 rm(list = ls()) ; cat("\014")
 
-# load the time-series residuals
-resids.raw <- read.csv(file = "/Users/mwelz/Documents/work/ra_franses/2019/wk33/sefm-eviews/ijf-revision-1/resid-cross-correlation/residstable.csv", header = TRUE)
+# load the time-series residuals of the SEFM models
+resids.raw       <- read.csv(file = paste0(getwd(), "/EViews/summaries/sefm-residuals.csv"), 
+                             header = TRUE)
 resids           <- resids.raw
 rownames(resids) <- resids[, "yr"]
 resids           <- resids[,-1]
@@ -40,5 +41,7 @@ for(j in 1:p){
   
 } # FOR
 
-# save 
-write.csv(t(autocorr.mat), file = "/Users/mwelz/Documents/work/ra_franses/2019/wk33/sefm-eviews/ijf-revision-1/resids-autocorr/resid-autocorr-tests.csv")
+# save the autocorrelation tests
+write.csv(t(autocorr.mat), 
+          file =  paste0(getwd(), 
+                         "/R/sefm-results-analysis/residual-autocorrelation/residual-autocorrelation.csv"))

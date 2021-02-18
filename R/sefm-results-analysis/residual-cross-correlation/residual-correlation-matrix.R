@@ -7,8 +7,9 @@
 #' ---------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014")
 
-# load the time-series residuals
-resids.raw <- read.csv(file = "/Users/mwelz/Documents/work/ra_franses/2019/wk33/sefm-eviews/ijf-revision-1/resid-cross-correlation/residstable.csv", header = TRUE)
+# load the time-series residuals of the SEFM models
+resids.raw       <- read.csv(file = paste0(getwd(), "/EViews/summaries/sefm-residuals.csv"), 
+                             header = TRUE)
 resids           <- resids.raw
 rownames(resids) <- resids[, "yr"]
 resids           <- resids[,-1]
@@ -18,9 +19,5 @@ resids <- resids[,-which(colnames(resids) == "angola")]
 resids <- resids[,-which(colnames(resids) == "botswana")]
 resids <- na.omit(resids) # make it a balanced panel by dropping 1961
 
-# evaluate correlation
-cross.corr <- cor(resids)
-foo=abs(cross.corr) > 0.4
-rowSums(foo)
-
-write.csv(cor(resids), file = "/Users/mwelz/Documents/work/ra_franses/2019/wk33/sefm-eviews/ijf-revision-1/resid-cross-correlation/resids-crosscorr.csv")
+# save the resulting correlation matrix
+write.csv(cor(resids), file = paste0(getwd(), "/R/sefm-results-analysis/residual-cross-correlation/residual-correlation-matrix.csv"))
