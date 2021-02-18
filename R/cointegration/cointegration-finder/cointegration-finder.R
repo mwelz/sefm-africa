@@ -1,17 +1,16 @@
-#' -------------------------------------------------------------------
-#' Here we obtain the Johansen tests in the same fashion as in "sefm-imp.R".
-#' TODO: Merge this script with "sefm-imp.R", as we don't need the numerical optimization in there anymore
+#' -------------------------------------------------------------------------------
+#' Here we perform the Johansen cointegration tests to find cointegration relationships between African countries.
 #' 
 #' Author: mwelz
 #' Last changed: Feb 18, 2021
-#' -------------------------------------------------------------------
+#' -------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014") 
 
 # load helper functions
-source("/Users/mwelz/Documents/work/ra_franses/2019/wk33/sefm-eviews/ijf-revision-1/johansen/helper-functions.R")
-
+source(paste0(getwd(), "/R/cointegration/cointegration-finder/helper-functions.R"))
+  
 ### 0.1 Load & prepare data, being GDP index with 1960 = 100 ----
-data           <- read.csv("/Users/mwelz/Documents/work/ra_franses/2019/wk17/data/africa_gdp_index.csv")
+data           <- read.csv(paste0(getwd(), "/data/processed/africa_gdp_index.csv"))
 data           <- data[1:57,] 
 rownames(data) <- data[,1]
 
@@ -107,5 +106,4 @@ for(i in N.set){
 names(RESULTS) <- countries
 
 # save everything
-save(RESULTS, file = "/Users/mwelz/Documents/work/ra_franses/2019/wk33/sefm-eviews/ijf-revision-1/johansen/johansen-results-raw.Rdata")
-
+save(RESULTS, file = paste0(getwd(), "/R/cointegration/cointegration-finder/cointegrations-raw.Rdata"))
