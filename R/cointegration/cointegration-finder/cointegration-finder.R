@@ -2,7 +2,7 @@
 #' Here we perform the Johansen cointegration tests to find cointegration relationships between African countries.
 #' 
 #' Author: mwelz
-#' Last changed: Feb 18, 2021
+#' Last changed: Feb 19, 2021
 #' -------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014") 
 
@@ -36,8 +36,8 @@ i <-  which(countries == 'GHANA')
 for(i in N.set){ 
   ### Step 1 ----
   # Retain countries for a country i
-  crdw.i <- rep(NA, N)
-  cors <- rep(NA, N)
+  crdw.i      <- rep(NA, N)
+  cors        <- rep(NA, N)
   names(cors) <- N.set
   for(j in N.set){
     if(j == i) next
@@ -52,7 +52,7 @@ for(i in N.set){
     dy.i <- dy.i[-c(1,2)] # TODO: drop 2nd or last?
     dy.j <- dy.j[-c(1,2)]
     cors[j] <- cor(dy.i, dy.j)
-  }
+  } # end j
   
   R.i.set <- c(i, which(crdw.i > tau)) # all retained countries (including i itself).
   #rm(resid, rho, crdw.i, j)
@@ -69,6 +69,7 @@ for(i in N.set){
     johansen <- johansen.try
   }
   coint <- as.numeric(data.smp %*% johansen@V[,1]) # 1st column is cointegration relationship
+  eigvals <- as.numeric(johansen@lambda)
   J.i.set <- R.i.set[-1]
   J <- data[,J.i.set]
   
@@ -98,6 +99,7 @@ for(i in N.set){
     pos.corr = pos.corr,
     neg.corr = neg.corr,
     johansen = joh,
+    johansen.eigenvalues = eigvals,
     hyperparams = list(tau = tau, tau.pc = tau.pc, tau.nc = tau.nc, K.pc = K.pc, K.nc = K.nc)
   )
   RESULTS[[i]] <- lst.out

@@ -10,6 +10,9 @@ library(xlsx)
 # load list "RESULTS" which was returned by "cointegration-finder.R"
 load(paste0(getwd(), "/R/cointegration/cointegration-finder/cointegrations-raw.Rdata"))
 
+# declare file path
+file <- paste0(getwd(), "/R/cointegration/summaries/cointegration-summary.xlsx")
+
 # the countries
 countries <- names(RESULTS)
 
@@ -35,7 +38,7 @@ for(i in 1:length(countries)){
   # Johansen coeffs
   joh <- results.i$johansen
   joh <- rbind(names(joh), round(joh,4)) ; rownames(joh) <- NULL ; colnames(joh) <- NULL
-  joh <- cbind(c('Johansen', ''), joh)
+  joh <- cbind(c('Johansen Cointegration Relationships', 'Coefficient'), joh)
   
   # correlations
   pos.cor <- results.i$pos.corr
@@ -44,54 +47,30 @@ for(i in 1:length(countries)){
   neg.cor <- results.i$neg.corr
   neg.cor <- rbind(names(neg.cor), round(neg.cor,4)) ; rownames(neg.cor) <- NULL ; colnames(neg.cor) <- NULL
   neg.cor <- cbind(c('Negative Correlations', ''), neg.cor)
-  
-  # convergence diagnostics
-  convergence <- matrix(NA, 3, 4)
-  convergence[1,] <- c('', 'SSR', 'Iterations', 'Converged?')
-  convergence[,1] <- c('', 'BFGS', 'Gauss-Newton')
-  convergence[c(2:3),2] <- c(results.i$ssr.bfgs, results.i$ssr.gm)
-  convergence[c(2:3),3] <- c(results.i$iters$bfgs, results.i$iters$gm)
-  convergence[c(2:3),4] <- c(results.i$convergence.bfgs, results.i$convergence.gm)
-  
+ 
   # hyperparams
   hyperparameters <- unlist(results.i$hyperparams)
   hyperparameters <- rbind(names(hyperparameters), hyperparameters)
   rownames(hyperparameters) <- colnames(hyperparameters) <- NULL
   hyperparameters <- cbind(c('Hyperparameters', ''), hyperparameters)
   
-  
-  # estimation results
-  res.bfgs <- round(results.i$results.bfgs, 6)
-  res.bfgs <- cbind(rownames(res.bfgs), res.bfgs)
-  res.bfgs <- rbind(colnames(res.bfgs), res.bfgs)
-  res.bfgs[1,1] <- 'BFGS Results'
-  colnames(res.bfgs) <- rownames(res.bfgs) <- NULL
-  
-  res.gn <- round(results.i$results.gm, 6)
-  res.gn <- cbind(rownames(res.gn), res.gn)
-  res.gn <- rbind(colnames(res.gn), res.gn)
-  res.gn[1,1] <- 'Gauss-Newton Results'
-  colnames(res.gn) <- rownames(res.gn) <- NULL
+  # Johansen eigenvalues
+  eigvals <- results.i$johansen.eigenvalues
+  eigvals <- c("Johansen Eigenvalues", eigvals)
   
   # put it all together:
-  n.row <- nrow(joh) + nrow(pos.cor) + nrow(neg.cor) + nrow(convergence) + nrow(res.bfgs) + nrow(res.bfgs) + 10
-  n.col <- max(ncol(joh), ncol(pos.cor), ncol(neg.cor), ncol(convergence), ncol(convergence), ncol(res.bfgs))
+  n.row <- nrow(joh) + nrow(pos.cor) + nrow(neg.cor) + 10
+  n.col <- max(ncol(joh), ncol(pos.cor), ncol(neg.cor), length(eigvals))
   
   RES <- matrix('', n.row, n.col)
   RES[1:nrow(joh), c(1:ncol(joh))] <- joh 
   ct <- length(1:nrow(joh))
+  RES[ct+3, 1:length(eigvals)] <- eigvals
+  ct <- ct + 3
   RES[(ct+3):(ct+3+nrow(pos.cor)-1), c(1:ncol(pos.cor))] <- pos.cor
   ct <- (ct+3+nrow(pos.cor)-1)
   RES[(ct+3):(ct+3+nrow(neg.cor)-1), c(1:ncol(neg.cor))] <- neg.cor
-  ct <- (ct+3+nrow(neg.cor)-1)
-  RES[(ct+3):(ct+3+nrow(convergence)-1), c(1:ncol(convergence))] <- convergence
-  ct <- (ct+3+nrow(convergence)-1)
-  RES[(ct+3):(ct+3+nrow(res.bfgs)-1), c(1:ncol(res.bfgs))] <- res.bfgs
-  ct <- (ct+3+nrow(res.bfgs)-1)
-  RES[(ct+3):(ct+3+nrow(res.gn)-1), c(1:ncol(res.gn))] <- res.gn
-  ct <- (ct+3+nrow(res.gn)-1)
-  
+ 
+  # save it
   write.xlsx(RES, file=file, sheetName=countries[i], append=TRUE, row.names=FALSE, col.names=FALSE)
 }
-
-
