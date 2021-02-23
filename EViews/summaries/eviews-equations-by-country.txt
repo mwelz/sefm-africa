@@ -108,6 +108,15 @@ log(gambia) - log(gambia(-1)) = c(1) + c(2)* (log(gambia(-1)) - c(31) * log(alge
 # The c(3i)'s are the Johansen coefficients (fill in console)
 param c(2) -0.3  c(4) 0.5 c(5) 0.6 c(6) 0.5 c(7) -0.6 c(8) 0.5 c(31) 0.4868 c(32) -0.1349 c(33) -0.3404 c(34) 0.6357 c(35) -1.4193 c(36) -1.6735 c(37) 0.0668 c(38) -0.649 c(39) -0.4173 c(310) 0.9705 c(311) 1.5035 c(312) 0.5951
 
+
+#### GHANA
+log(ghana) - log(ghana(-1)) = c(1) + c(2)* (log(ghana(-1)) - c(31) *log(chad(-1)) - c(32) * log(madagascar(-1)) - c(33) * log(niger(-1))) + c(4) * (log(ghana(-1)) - log(ghana(-2))) +c(5) * (log(tanzania(-1)) - log(tanzania(-2))) + c(5) * c(6) * (log(guinea(-1)) - log(guinea(-2))) + c(5) * c(6) * c(6) * (log(ethiopia(-1)) - log(ethiopia(-2))) +c(7) * (log(congorepub(-1)) - log(congorepub(-2))) + c(7) * c(8) * (log(southafrica(-1)) - log(southafrica(-2))) + c(7) * c(8) * c(8) * (log(gabon(-1)) - log(gabon(-2)))
+
+## Initial values 
+# The c(3i)'s are the Johansen coefficients (fill in console)
+param c(2) -0.3  c(4) 0.5 c(5) 0.6 c(6) 0.5 c(7) -0.6 c(8) 0.5 c(31) -2.705 c(32) 1.3871 c(33) 1.4922
+
+
 #### GUINEA
 log(guinea) - log(guinea(-1)) = c(1) + c(2)* (log(guinea(-1)) - c(31) * log(BENIN(-1)) - c(32) * log(CAR(-1)) - c(33) * log(guineabissau(-1)) - c(34) * log(mali(-1)) -c(34) * log(senegal(-1)) ) + c(4) * (log(guinea(-1)) - log(guinea(-2))) +c(5) * (log(mozambique(-1)) - log(mozambique(-2))) + c(5) * c(6) * (log(ethiopia(-1)) - log(ethiopia(-2))) + c(5) * c(6) * c(6) * (log(zimbabwe(-1)) - log(zimbabwe(-2))) +c(7) * (log(sierraleone(-1)) - log(sierraleone(-2))) + c(7) * c(8) * (log(congorepub(-1)) - log(congorepub(-2))) + c(7) * c(8) * c(8) * (log(cameroon(-1)) - log(cameroon(-2)))
 
