@@ -1,0 +1,1 @@
+"africa_gdp_index.csv" contains index data of annual GDP growth of African countries between 1960 and  2016. Note that the file also contains uninformative data for 2017-2020 (inclusive). These data are uninformative because they exhibit 0 variation.
