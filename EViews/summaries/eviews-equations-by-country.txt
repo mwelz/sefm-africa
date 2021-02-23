@@ -1,3 +1,8 @@
+
+#######################################################################################
+# 1. Models for which cointegration relationships were found
+#######################################################################################
+
 #### ALGERIA
 log(algeria) - log(algeria(-1)) = c(1) + c(2)* (log(algeria(-1)) - c(31) * log(botswana(-1)) - c(32) * log(burundi(-1)) - c(33) * log(cameroon(-1)) - c(34) * log(car(-1)) -c(35) * log(comoros(-1)) -c(36) * log(congorepub(-1)) -c(37) * log(gabon(-1)) -c(38) * log(gambia(-1)) -c(39) * log(ivorycoast(-1)) -c(310) * log(kenya(-1)) -c(311) * log(lesotho(-1)) -c(312) * log(malawi(-1)) -c(313) * log(mauritius(-1)) -c(314) * log(morocco(-1)) -c(315) * log(seychelles(-1)) -c(316) * log(southafrica(-1)) -c(317) * log(togo(-1)) -c(318) * log(tunisia(-1))) + c(4) * (log(algeria(-1)) - log(algeria(-2))) +c(5) * (log(kenya(-1)) - log(kenya(-2))) + c(5) * c(6) * (log(congodr(-1)) - log(congodr(-2))) + c(5) * c(6) * c(6) * (log(morocco(-1)) - log(morocco(-2))) + c(7) * (log(mauritania(-1)) - log(mauritania(-2))) + c(7) * c(8) * (log(benin(-1)) - log(benin(-2))) + c(7) * c(8) * c(8) * (log(senegal(-1)) - log(senegal(-2)))
 
@@ -280,7 +285,9 @@ param c(2) -0.3  c(4) 0.5 c(5) 0.6 c(6) 0.5 c(7) -0.6 c(8) 0.5 c(31) -0.42 c(32)
 
 
 
-######################### countries w/o Johansen:
+###########################################################################################
+# 2. Countries for which no cointegration relationships were found
+###########################################################################################
 
 ### CAR
 log(car) - log(car(-1)) = c(1) + c(4) * (log(car(-1)) - log(car(-2))) +c(5) * (log(caboverde(-1)) - log(caboverde(-2))) + c(5) * c(6) * (log(mali(-1)) - log(mali(-2))) + c(5) * c(6) * c(6) * (log(somalia(-1)) - log(somalia(-2)))
