@@ -8,6 +8,7 @@ Single Equation Forecasting modeling on African GDP data.
 - [x] Add txt summary of countries.tex in /EViews
 - [x] Add the Excel maker in /cointegration
 - [x] Summarize 2nd eigenvalue of Johansen test
-- [ ] Implement autocorrelation and cross-correlation checks of the residuals also for the OLS models
+- [ ] Ask Philip Hans whether we also perform model building in OLS models
+- [x] Implement autocorrelation and cross-correlation checks of the residuals also for the OLS models
 - [ ] Add the benchmark models random walk, AR(1)
 - [ ] Add Excel file of all 1-step ahead forecasts and residual time series in EViews and a separate Readme.md for /EViews
