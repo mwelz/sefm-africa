@@ -100,6 +100,7 @@ for(i in N.set){
     neg.corr = neg.corr,
     johansen = joh,
     johansen.eigenvalues = eigvals,
+    coint.variable = stats::ts(coint, start = c(1960,1), end = c(2016,1), frequency = 1),
     hyperparams = list(tau = tau, tau.pc = tau.pc, tau.nc = tau.nc, K.pc = K.pc, K.nc = K.nc)
   )
   RESULTS[[i]] <- lst.out
