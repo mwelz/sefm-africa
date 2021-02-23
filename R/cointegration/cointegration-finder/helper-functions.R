@@ -5,7 +5,8 @@ ols <- function(X, y){
   X      <- cbind(1, X)
   beta   <- as.numeric(solve(t(X) %*% X) %*% t(X) %*% y)
   resids <- y - X %*% beta
-  return(list(coeffs = beta, resids = as.numeric(resids)))
+  y.hat  <- X %*% beta
+  return(list(coeffs = beta, resids = as.numeric(resids), y.hat = as.numeric(y.hat)))
 }
 
 lag.p <- function(y, p){
