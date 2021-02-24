@@ -1,8 +1,9 @@
 #' -----------------------------------------------------------------------------
 #' Here we use OLS models to do 1-step ahead forecasts (expanding window).
+#' We use variable selection.
 #' 
 #' Author: mwelz
-#' Last changed: Feb. 23, 2021.
+#' Last changed: Feb. 24, 2021.
 #' ------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014")
 
@@ -25,8 +26,9 @@ K.nc        <- RESULTS[[1]]$hyperparams$K.nc
 hyperparams <- RESULTS[[1]]$hyperparams
 
 # the end years of the expanding window, one at a time
-end.years <- c(2010, 2011, 2012, 2013, 2014, 2015)
-OLS.RESULTS <- list()
+end.years    <- c(2010, 2011, 2012, 2013, 2014, 2015)
+OLS.RESULTS  <- list()
+significance <- 0.05 # significance level
 
 
 for(i in 1:length(countries)){
@@ -85,20 +87,41 @@ for(i in 1:length(countries)){
     # window period
     period <- 1:which(rownames(regressors) == t)
     
-    # run OLS
-    ols.obj <- ols(regressors[period,], y.d.lag1[period])
+    # estimate OLS and apply t-test with White SEs
+    set.seed(1)
+    ols.obj0     <- lm(y.d.lag1 ~., data.frame(y.d.lag1 = y.d.lag1[period], regressors[period,]))
+    ttest.pvals  <- lmtest::coeftest(ols.obj0, vcov = sandwich::vcovHC(ols.obj0, type = "HC0"))[,"Pr(>|t|)"]
     
+    # model building
+    retained.regressors <- ttest.pvals < significance
+    retained.regressors <- retained.regressors[-1] # ignore intercept
+    
+    if(any(retained.regressors)){
+      
+      # case 1: we retained at least 1 regressor
+      regressors.temp <- regressors[period, retained.regressors]
+      ols.obj <- lm(y.d.lag1 ~., data.frame(y.d.lag1 = y.d.lag1[period], 
+                                            regressors[period, retained.regressors]))
+    } else{
+      
+      # case 2: no regressors were retained. Continue with original model
+      retained.regressors <- rep(TRUE, length(retained.regressors))
+      ols.obj <- ols.obj0
+    }
+    
+
     # predictions (recall that we lost the first two periods due to lagging)
-    yhat <- c(NA_real_, NA_real_, ols.obj$y.hat)
+    yhat <- c(NA_real_, NA_real_, ols.obj$fitted.values)
     names(yhat) <- 1960:t
     
     # residuals
-    resids <- c(NA_real_, NA_real_, ols.obj$resids)
+    resids <- c(NA_real_, NA_real_, ols.obj$residuals)
     names(resids) <- 1960:t
     
     ## 1-step-ahead forecast
-    onestepfcast <- sum(ols.obj$coeffs * c(1, regressors[which(rownames(regressors) == t + 1),]))
-    true.value   <- as.numeric(y.d.lag1[(names(y.d.lag1) == t + 1)])
+    regressors.hat <- regressors[which(rownames(regressors) == t + 1), retained.regressors]
+    onestepfcast   <- sum(ols.obj$coefficients * c(1, regressors.hat))
+    true.value     <- as.numeric(y.d.lag1[(names(y.d.lag1) == t + 1)])
     
     # store results
     ols.i[[paste0("smpl1960to", t)]][["in-sample-forecasts"]]  <- yhat
