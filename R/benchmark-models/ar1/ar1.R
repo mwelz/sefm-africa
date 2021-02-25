@@ -44,13 +44,13 @@ for(i in 1:length(countries)){
     # fit AR(1) model with intercept by OLS (first observation is NA due to lagging, so drop it)
     ar.mod        <- ar.ols(y.d.lag1.subset[-1], order.max = 1, intercept = TRUE,
                             demean = FALSE, aic = FALSE)
+
     ar.intercept  <- ar.mod$x.intercept
     ar.coef       <- as.numeric(ar.mod$ar)
     
     # perform 1-step ahead forecast
-    ar.1stepfcast <- ar.intercept +
-      ar.coef * y.d.lag1.subset[which(names(y.d.lag1.subset) == t)]
-    
+    ar.1stepfcast <- predict(ar.mod)$pred
+      
     # evaluate the forecast
     true.value <- y.d.lag1[which(names(y.d.lag1) == t + 1)]
     
