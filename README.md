@@ -12,4 +12,4 @@ Single Equation Forecasting modeling on African GDP data.
 - [x] Implement autocorrelation and cross-correlation checks of the residuals also for the OLS models
 - [x] Make sure the dependent variables are consistent (in particular the AR(1))
 - [x] Add the benchmark models random walk, AR(1), MA(1)
-- [ ] Add Excel file of all 1-step ahead forecasts and residual time series in EViews and a separate Readme.md for /EViews
+- [x] Add Excel file of all 1-step ahead forecasts and residual time series in EViews and a separate Readme.md for /EViews
