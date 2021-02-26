@@ -1,7 +1,7 @@
 #' ---------------------------------------------------------------------------------
 #' We evaluate the cross correlations of the time-series-residuals of African countries, obtained from the SEFM models (and the OLS models in case of non-convergence). Concretely, these are the models with sample period 1960 to 2015. All countries have NA for 1960 and some also for 1961, due to lagging (in some, only the 1st lag was excluded in the model building process). Data obtained from "africa_gdp_index.wf1".
 #' 
-#' Last changed: Feb 23, 2021.
+#' Last changed: Feb 26, 2021.
 #' Author: mwelz
 #' ---------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014")
@@ -51,5 +51,27 @@ colnames(resids) <- paste0(countries, " (", types, ")")
 # make it a balanced panel by dropping 1961
 resids <- na.omit(resids) 
 
+# correlation matrix
+cormat <- cor(resids)
+
+# array with unique correlations
+corr.arr <- cormat[upper.tri(cormat, diag = FALSE)]
+
+# for the names
+cormat.nam <- data.frame(matrix(NA_real_, nrow(cormat), ncol(cormat)))
+countries.nam <- colnames(cormat)
+
+for(i in 1:length(countries.nam)){
+  for(j in 1:length(countries.nam)){
+    cormat.nam[i,j] <- paste0(countries.nam[i], " and ", countries.nam[j])
+  }
+}
+
+corr.nam.arr <- cormat.nam[upper.tri(cormat.nam, diag = FALSE)]
+out <- data.frame(Countries = corr.nam.arr, ResidualCorrelation = corr.arr)
+
+
 # save the resulting correlation matrix
-write.csv(cor(resids), file = paste0(getwd(), "/R/sefm-results-analysis/residual-cross-correlation/residual-correlation-matrix.csv"))
+write.csv(cormat, file = paste0(getwd(), "/R/sefm-results-analysis/residual-cross-correlation/residual-correlation-matrix.csv"))
+
+write.csv(out, file = paste0(getwd(), "/R/sefm-results-analysis/residual-cross-correlation/individual-residual-correlation.csv"), row.names = FALSE)
