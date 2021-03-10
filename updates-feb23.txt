@@ -1,4 +1,0 @@
-changes_feb23
-- update list of countries that did not converge and where no Johansen
-- I updated last prediction (for 2016) of Botswana, previously wrong
-- Angola does not converge, do don't consider NLS results there!
