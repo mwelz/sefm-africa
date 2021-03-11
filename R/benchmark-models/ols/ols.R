@@ -3,7 +3,7 @@
 #' We use variable selection.
 #' 
 #' Author: mwelz
-#' Last changed: Feb. 24, 2021.
+#' Last changed: Mar. 11, 2021.
 #' ------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014")
 
@@ -29,6 +29,11 @@ hyperparams <- RESULTS[[1]]$hyperparams
 end.years    <- c(2010, 2011, 2012, 2013, 2014, 2015)
 OLS.RESULTS  <- list()
 significance <- 0.05 # significance level
+
+# matrix for adjusted R^2
+ols.adjr2 <- matrix(NA_real_, length(end.years), length(countries))
+rownames(ols.adjr2) <- paste0("smpl1960to", end.years)
+colnames(ols.adjr2) <- countries
 
 
 for(i in 1:length(countries)){
@@ -129,6 +134,9 @@ for(i in 1:length(countries)){
     ols.i[[paste0("smpl1960to", t)]][["one-step-ahead-fcast"]] <- 
       c(fcast = onestepfcast, truth = true.value)
     
+    # store adjusted R^2
+    ols.adjr2[paste0("smpl1960to", t), i] <- summary(ols.obj)$adj.r.squared
+    
   } # END end.years
   
   # add the hyperparams
@@ -142,3 +150,4 @@ for(i in 1:length(countries)){
 # name the list and store it
 names(OLS.RESULTS) <- countries
 save(OLS.RESULTS, file = paste0(getwd(), "/R/benchmark-models/ols/ols-results.Rdata"))
+save(ols.adjr2, file = paste0(getwd(), "/R/benchmark-models/ols/ols-adjr2.Rdata"))
