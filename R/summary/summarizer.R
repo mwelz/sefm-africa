@@ -178,6 +178,9 @@ for(i in 1:length(countries)){
 # prepare the CSV for the performance evaluations
 perf.eval.out <- perf.eval[, c("Estimation_Type", "SEFM_ME", "SEFM_MAE", "MA1_ME", "MA1_MAE", "AR1_ME", "AR1_MAE", "OLS_ME", "OLS_MAE", "RW_ME", "RW_MAE")]
 
+# save
+save(perf.eval.out, file = paste0(getwd(), "/R/summary/performances.Rdata"))
+
 # round
 perf.eval.out[-1] <- round(perf.eval.out[-1], 2)
 write.csv(perf.eval.out, file = paste0(getwd(), "/R/summary/performances.csv"))
