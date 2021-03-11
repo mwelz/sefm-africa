@@ -30,6 +30,11 @@ FCASTS.ls <- list()
 winner.mat <- matrix(0, length(countries), length(models))
 rownames(winner.mat) <- countries
 colnames(winner.mat) <- models
+perf.eval <- as.data.frame(matrix(NA_real_, length(countries), 11))
+models.me <- paste0(models, "_ME")
+models.mae <- paste0(models, "_MAE")
+colnames(perf.eval) <- c("Estimation_Type", models.me, models.mae)
+rownames(perf.eval) <- countries
 
 for(i in 1:length(countries)){
   
@@ -105,14 +110,39 @@ for(i in 1:length(countries)){
     # assign 1 to the winning model
     winner.mat[i, winner] <- 1
     
-  }
+  } # END IF
   
   # include zero in RMSE to account for the true value
   RMSE <- c(0, RMSE)
   
   # assign results
   FCASTS.ls[[i]] <- rbind(out.i, RMSE)
-}
+  
+  ## other performance measures
+  # MAE (multiply by 100 to make it growth rates)
+  mae <- sapply(models, function(x){
+      mean(abs(100 * out.i[, "Truth"] - 100 * out.i[, x])) 
+  })
+  
+  # Mean Error (ME)
+  me <- sapply(models, function(x){
+    mean(100 * out.i[, "Truth"] - 100 * out.i[, x]) 
+  })
+  
+  # assign the MAE and ME 
+  perf.eval[i, models.mae] <- mae
+  perf.eval[i, models.me]  <- me
+  
+  if(countries[i] %in% ols.arr){
+    type <- "OLS"
+  } else if(countries[i] %in% nls2.arr){
+    type <- "NLS w/o relations"
+  } else{
+    type <- "NLS"
+  }
+  perf.eval[i, "Estimation_Type"] <- type
+  
+} # FOR
 
 names(FCASTS.ls) <- countries
 
@@ -144,3 +174,8 @@ for(i in 1:length(countries)){
                     col.names = TRUE)
   
 }
+
+# prepare the CSV for the performance evaluations
+perf.eval.out <- perf.eval[, c("Estimation_Type", "SEFM_ME", "SEFM_MAE", "MA1_ME", "MA1_MAE", "AR1_ME", "AR1_MAE", "OLS_ME", "OLS_MAE", "RW_ME", "RW_MAE")]
+
+write.csv(perf.eval.out, file = paste0(getwd(), "/R/summary/performances.csv"))
