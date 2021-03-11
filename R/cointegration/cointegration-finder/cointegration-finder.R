@@ -31,7 +31,7 @@ tau.nc <- 0   # for the negative correlations
 K.pc   <- 3   # the _K_ strongest positive correlations to be considered
 K.nc   <- 3   # the _K_ strongest negative correlations to be considered
 
-i <-  which(countries == 'GHANA')
+i <-  which(countries == 'BOTSWANA') # replicating the example in the paper
 
 for(i in N.set){ 
   ### Step 1 ----
