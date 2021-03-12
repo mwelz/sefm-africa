@@ -183,4 +183,4 @@ save(perf.eval.out, file = paste0(getwd(), "/R/summary/performances.Rdata"))
 
 # round
 perf.eval.out[-1] <- round(perf.eval.out[-1], 2)
-write.csv(perf.eval.out, file = paste0(getwd(), "/R/summary/performances.csv"))
+write.csv(perf.eval.out, file = paste0(getwd(), "/R/summary/model-performance-comparison.csv"))
