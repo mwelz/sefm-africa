@@ -39,7 +39,7 @@ Let there be $N$ countries for each of which we have $T$ time series observation
 \subsection{Step 1}
 For a fixed country $i \in \mathcal{N}$, run $N-1$ OLS time series regressions of the type
 \begin{equation}
-    y_{it} = \delta_i + \pi_i y_{j,t} + \omega_{jt}, \quad t=1,\dots,T, \label{eq:omega}
+    y_{i,t} = \delta_i + \pi_i y_{j,t} + \omega_{i,t}^{(j)}, \quad t=1,\dots,T, \label{eq:omega}
 \end{equation}
 for all $j \in \mathcal{N}\setminus \{i\}$. Compute with the estimated OLS residuals $\hat{\omega}_{i,t}^{(j)}$ the (estimated) first order autocorrelation $\hat{\rho}_i^{(j)} = \text{Cov} \big( \hat{\omega}_{i,t}^{(j)}, \hat{\omega}_{i,t-1}^{(j)} \big) / \text{Var} \big( \hat{\omega}_{i,t}^{(j)} \big)$ for all $j \in \mathcal{N}\setminus\{i\}$, and use this quantity to calculate the Cointegration Regression Durbin-Watson (CRDW) test statistic by
  \begin{equation}
@@ -114,7 +114,7 @@ for $t=3,\dots,T$. Note that $\bm{\theta}_{pc,i}$ is a $K_{pc}$-vector of coeffi
 
 We then drop all variables whose OLS coefficients are not statistically significant at 95\% confidence (with robust standard errors) and re-estimate the OLS model to arrive at our final OLS model.
 
-\subsection{NLS Estiamation} \label{sec:nls}
+\subsection{NLS Estimation} \label{sec:nls}
 For a given country $i \in \mathcal{N}$, fit the following model by means of NLS estimation:
  \begin{equation}
  \begin{split}
@@ -131,7 +131,7 @@ For a given country $i \in \mathcal{N}$, fit the following model by means of NLS
  \end{equation}
 for $t=3,\dots,T$. The scalars $p_{i,t,j}$ and $n_{i,t,j}$ are the $j$-th elements of the vectors $\mathbf{p}_{i,t}$ and $\mathbf{n}_{i,t}$, respectively.
 
-The parameter $\bm{\beta}_i$ in \eqref{eq:nls} is a $|\mathcal{J}_i|$-vector of coefficients. Further (scalar) parameters are $\mu_i, \gamma_i, \lambda_i, \theta_{pc,i}, \theta_{nc,i}, \alpha_{nc,i},$ and $\alpha_{pc,i}$. Hence, the NLS needs to numerically estimate $7 + |\mathcal{J}_i|$ parameters. Note that the problem associated with \eqref{eq:nls} is non-convex,\footnote{The objective function to optimize the parameters by means of NLS is the usual sum of squared residuals, i.e. $\sum_{t=3}^T \varepsilon_{i,t}^2$ in \eqref{eq:nls}.} hence we cannot guarantee that the returned local optimum is also the global optimum, let alone that the chosen optimization algorithm even converges (especially given the number of parameters to estimate here).
+The parameter $\bm{\beta}_i$ in \eqref{eq:nls} is a $|\mathcal{J}_i|$-vector of coefficients. Further (scalar) parameters are $\mu_i, \gamma_i, \lambda_i, \theta_{pc,i}, \theta_{nc,i}, \alpha_{nc,i},$ and $\alpha_{pc,i}$. Hence, the NLS needs to numerically estimate $7 + |\mathcal{J}_i|$ parameters. Note that the problem associated with \eqref{eq:nls} is non-convex,\footnote{The objective function to optimize the parameters by means of NLS is the usual sum of squared residuals, i.e. $\sum_{t=3}^T \varepsilon_{i,t}^2$ in \eqref{eq:nls}.} so we cannot guarantee that the returned local optimum is also the global optimum, let alone that the chosen optimization algorithm even converges (especially given the number of parameters to estimate here).
 
 We use the following initial values for the numerical optimization:
 \begin{itemize}
