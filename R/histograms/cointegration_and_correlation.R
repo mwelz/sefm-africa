@@ -17,18 +17,19 @@ rownames(corr.overview) <- countries
 
 for(i in 1:length(countries)){
   
-  # skip if no cointegration relationships are found
-  if(!is.list(RESULTS[[i]])) next
-  
-  countries.coint <- names(RESULTS[[i]]$johansen)
+  # autocorrelations
   countries.corr  <- c(names(RESULTS[[i]]$pos.corr), names(RESULTS[[i]]$neg.corr))
-  
-  coint.mat[i, countries %in% countries.coint] <- 1
   corrs.mat[i, countries %in% countries.corr]  <- 1
-  
-  coint.overview[i,] <- paste(countries.coint, collapse = ", ")
   corr.overview[i, "PosCorr"] <- paste(names(RESULTS[[i]]$pos.corr), collapse = ", ")
   corr.overview[i, "NegCorr"] <- paste(names(RESULTS[[i]]$neg.corr), collapse = ", ")
+  
+  # loop stops here if there are no cointegration relationships
+  if("STOP" %in% names(RESULTS[[i]])) next
+  
+  # cointegration relations
+  countries.coint <- names(RESULTS[[i]]$johansen)
+  coint.mat[i, countries %in% countries.coint] <- 1
+  coint.overview[i,] <- paste(countries.coint, collapse = ", ")
 }
 
 # how often does a country appear in a cointregration relation?
@@ -49,7 +50,7 @@ dev.off()
 
 # how often was a country's autocorrelation among the K.nc or K.pc?
 corrs.appearance <- colSums(corrs.mat)
-sort(corrs.appearance) # Libya = 0, Eritrea = 13
+sort(corrs.appearance) # Libya = NAMIBIA = NIGERIA = 1, Botswana = 15
 
 pdf(file = paste0(getwd(), "/R/histograms/plots/correlationn_appearance.pdf"))
 gg <- ggplot(data.frame(corrs.appearance = corrs.appearance), aes(x = corrs.appearance)) + 

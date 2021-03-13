@@ -3,7 +3,7 @@
 #' We use variable selection.
 #' 
 #' Author: mwelz
-#' Last changed: Mar. 11, 2021.
+#' Last changed: Mar. 13, 2021.
 #' ------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014")
 
@@ -39,8 +39,8 @@ colnames(ols.adjr2) <- countries
 for(i in 1:length(countries)){
   
   # skip country if no cointegration relationship was found
-  if(!is.list(RESULTS[[i]])){
-    OLS.RESULTS[[i]] <- RESULTS[[i]]
+  if("STOP" %in% names(RESULTS[[i]])){
+    OLS.RESULTS[[i]] <- RESULTS[[i]]$STOP
     next
   } # END IF
   

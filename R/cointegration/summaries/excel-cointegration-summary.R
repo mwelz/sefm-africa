@@ -2,7 +2,7 @@
 #' Makes a nice xlsx file that summarizes the Johansen cointegration relationships that were found in "cointegration-finder.R".
 #' 
 #' Author: mwelz 
-#' Last changed: Feb 18, 2021
+#' Last changed: Mar 13, 2021
 #' -------------------------------------------------------------------------------------------
 rm(list = ls()) ; cat('\014')
 library(xlsx)
@@ -30,8 +30,17 @@ for(i in 1:length(countries)){
   results.i <- RESULTS[[i]]
   
   # If no Johansen cointegration relationship was found:
-  if(!is.list(results.i)){
-    write.xlsx(results.i, file=file, sheetName=countries[i], append=TRUE, row.names=FALSE, col.names=FALSE)
+  if("STOP" %in% names(results.i)){
+    
+    RES <- matrix("", 10, max(results.i$hyperparams$K.pc, results.i$hyperparams$K.nc ) + 1)
+    RES[1,1] <- results.i$STOP
+    RES[4,] <- c("Positive Correlations", names(results.i$pos.corr))
+    RES[5,] <- c("", round(results.i$pos.corr, 4))
+    
+    RES[8,] <- c("Negative Correlations", names(results.i$neg.corr))
+    RES[9,] <- c("", round(results.i$neg.corr, 4))
+    
+    write.xlsx(RES, file=file, sheetName=countries[i], append=TRUE, row.names=FALSE, col.names=FALSE)
     next
   }
   
