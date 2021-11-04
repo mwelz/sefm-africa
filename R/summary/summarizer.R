@@ -5,10 +5,13 @@ load(paste0(getwd(), "/R/benchmark-models/ar1/ar1-results.Rdata"))
 load(paste0(getwd(), "/R/benchmark-models/ima/ima-results.Rdata"))
 load(paste0(getwd(), "/R/benchmark-models/ols/ols-results.Rdata"))
 load(paste0(getwd(), "/R/benchmark-models/rw/rw-results.Rdata"))
+load(paste0(getwd(), "/R/benchmark-models/pcr/pcr-results.Rdata"))
+
 
 # adjust names
 AR1.RESULTS <- ar1.results ; rm(ar1.results)
 MA1.RESULTS <- ma1.results ; rm(ma1.results)
+PCR.RESULTS <- pcr.results ; rm(pcr.results)
 
 # load SEFM results (the 2 warnings come from the unused EViews objects C and resid)
 SEFM.RESULTS <- hexView::readEViews(paste0(getwd(), "/EViews/africa_gdp_index.wf1"))
@@ -25,12 +28,12 @@ ols.arr <- c("ANGOLA", "CABOVERDE", "ERITREA", "GHANA", "MAURITANIA", "MAURITIUS
 # the forecast years
 years.fcast <- c(2011, 2012, 2013, 2014, 2015, 2016)
 
-models <- c("SEFM", "OLS", "AR1", "MA1", "RW")
+models <- c("SEFM", "OLS", "AR1", "MA1", "RW", "PCR")
 FCASTS.ls <- list()
 winner.mat <- matrix(0, length(countries), length(models))
 rownames(winner.mat) <- countries
 colnames(winner.mat) <- models
-perf.eval <- as.data.frame(matrix(NA_real_, length(countries), 11))
+perf.eval <- as.data.frame(matrix(NA_real_, length(countries), 2*length(models)+1))
 models.me <- paste0(models, "_ME")
 models.mae <- paste0(models, "_MAE")
 colnames(perf.eval) <- c("Estimation_Type", models.me, models.mae)
@@ -67,7 +70,7 @@ for(i in 1:length(countries)){
   rownames(rw) <- years.fcast
   
   # prepare object to store results in
-  out.i <- matrix(NA_real_, length(years.fcast), 6)
+  out.i <- matrix(NA_real_, length(years.fcast), length(models)+1)
   rownames(out.i) <- years.fcast
   colnames(out.i) <- c("Truth", models) 
   
@@ -86,11 +89,13 @@ for(i in 1:length(countries)){
     
   } # IF
   
+  
   out.i[, "OLS"]   <- ols[,"fcast"]
   out.i[, "Truth"] <- rw[,"truth"]
   out.i[, "AR1"]   <- ar1[,"one.step.ahead.fcast"]
   out.i[, "MA1"]   <- ma1[,"one.step.ahead.fcast"]
   out.i[, "RW"]    <- rw[,"fcast"]
+  out.i[, "PCR"]   <- PCR.RESULTS[[i]][,"one.step.ahead.fcast"]
   
   # get root mean squared prediction error
   RMSE <- sapply(models, function(x){
@@ -176,7 +181,7 @@ for(i in 1:length(countries)){
 }
 
 # prepare the CSV for the performance evaluations
-perf.eval.out <- perf.eval[, c("Estimation_Type", "SEFM_ME", "SEFM_MAE", "MA1_ME", "MA1_MAE", "AR1_ME", "AR1_MAE", "OLS_ME", "OLS_MAE", "RW_ME", "RW_MAE")]
+perf.eval.out <- perf.eval[, c("Estimation_Type", "SEFM_ME", "SEFM_MAE", "MA1_ME", "MA1_MAE", "AR1_ME", "AR1_MAE", "OLS_ME", "OLS_MAE", "RW_ME", "RW_MAE", "PCR_ME", "PCR_MAE")]
 
 # save
 save(perf.eval.out, file = paste0(getwd(), "/R/summary/performances.Rdata"))
