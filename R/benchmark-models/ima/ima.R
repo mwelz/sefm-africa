@@ -2,7 +2,7 @@
 #' Here we use IMA models (which are MA(1) models to do 1-step ahead forecasts (expanding window).
 #' 
 #' Author: mwelz
-#' Last changed: Feb. 25, 2021.
+#' Last changed: Nov 5, 2021.
 #' ------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014")
 
@@ -31,9 +31,9 @@ for(i in 1:length(countries)){
   names(y.d.lag1) <- rownames(data.log)
   
   # initialize
-  out <- matrix(NA_real_, length(end.years), 4)
+  out <- matrix(NA_real_, length(end.years), 5)
   rownames(out) <- paste0("(1960, ", end.years, ")")
-  colnames(out) <- c("MA1.intercept", "MA1.coefficient", "one.step.ahead.fcast",
+  colnames(out) <- c("MA1.intercept", "MA1.coefficient","adjR2", "one.step.ahead.fcast",
                      "true.value")
   
   for(j in 1:length(end.years)){
@@ -47,6 +47,13 @@ for(i in 1:length(countries)){
     ma.intercept  <- ma.obj$coef["intercept"]
     ma.coef       <- ma.obj$coef["ma1"]
     
+    # calculate R^2 (account for the observation lost to lagging)
+    n.active <- length(y.d.lag1.subset[-1])
+    tss   <- mean((y.d.lag1.subset[-1] - mean(y.d.lag1.subset[-1]))^2)
+    rss   <- mean(ma.obj$residuals[-1]^2) 
+    r2    <- 1 - rss / tss
+    r2adj <- 1 - (1 - r2) * (n.active - 1) / (n.active - 2)
+    
     # perform 1-step ahead forecast
     ma.1stepfcast <- predict(ma.obj)$pred
     
@@ -56,6 +63,7 @@ for(i in 1:length(countries)){
     # store results
     out[j, "MA1.intercept"]        <- ma.intercept
     out[j, "MA1.coefficient"]      <- ma.coef
+    out[j, "adjR2"]                <- r2adj
     out[j, "one.step.ahead.fcast"] <- as.numeric(ma.1stepfcast)
     out[j, "true.value"]           <- as.numeric(true.value)
     

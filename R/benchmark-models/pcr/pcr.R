@@ -2,7 +2,7 @@
 #' Here we use principal component regression to do 1-step ahead forecasts (expanding window).
 #' 
 #' Author: mwelz
-#' Last changed: Nov 4, 2021.
+#' Last changed: Nov 5, 2021.
 #' ------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014")
 
@@ -44,10 +44,10 @@ for(i in country.idxs){
   names(y.d.lag1) <- rownames(data.log)
   
   # initialize
-  out <- matrix(NA_real_, length(end.years), ncol(data.log) + 2)
+  out <- matrix(NA_real_, length(end.years), ncol(data.log) + 3)
   rownames(out) <- paste0("(1960, ", end.years, ")")
   colnames(out) <- c(paste0("coef_",colnames(data.log), "_lag"),
-                     "one.step.ahead.fcast", "true.value")
+                     "adjR2", "one.step.ahead.fcast", "true.value")
   
   for(j in 1:length(end.years)){
     
@@ -64,13 +64,18 @@ for(i in country.idxs){
     data.t  <- data.t[-c(1:2),]
 
     # perform PCR
-    pcr.mod <- pls::pcr(y~., data = data.t, center = TRUE, scale = TRUE)
+    pcr.mod <- pls::pcr(y~., data = data.t, center = TRUE, scale = TRUE, validation = "none")
     
     # it's unclear how we can extract eigenvalues from pcr object, so compute them separately
     eigvalues <- eigen(cor(data.t[,-1]))$values # drop dependent variable
    
     # retain variables according to the Kaiser criterion
     num.retained <- max(which(eigvalues >= 1))
+    
+    # calculate adjusted R^2
+    val <- pls::mvrValstats(pcr.mod, estimate = "train", ncomp = num.retained)
+    r2  <- as.numeric(1 - val$SSE[,,2] / val$SST)
+    r2adj <- 1 - (1 - r2) * (nrow(data.t) - 1) / (nrow(data.t) - num.retained)
     
     # predict y for period t+1 by only using information of period t
     pcr.pred <- predict(pcr.mod, X.lag[idx.t,,drop = FALSE], ncomp = num.retained)[,,1]
@@ -83,6 +88,7 @@ for(i in country.idxs){
 
     # store results
     out[j, country.idxs]           <- unname(cf)
+    out[j, "adjR2"]                <- r2adj
     out[j, "one.step.ahead.fcast"] <- unname(pcr.pred)
     out[j, "true.value"]           <- unname(true.value)
     

@@ -2,7 +2,7 @@
 #' Here we use a random walk to do 1-step ahead forecasts (expanding window).
 #' 
 #' Author: mwelz
-#' Last changed: Feb. 24, 2021.
+#' Last changed: Nov 5, 2021.
 #' ------------------------------------------------------------------------------
 rm(list = ls()) ; cat("\014")
 
@@ -48,9 +48,17 @@ for(i in 1:length(countries)){
   rw.i <- list()
   for(t in end.years){
     
+    # index of time period t
+    t.idx <- which(names(y.d.lag1) == t)
+    
+    # attempt to calculate R^2 in RW; not meaningful!
+    #tss <- mean((y.d.lag1.true[3:t.idx] - mean(y.d.lag1.true[3:t.idx]))^2)
+    #rss <- mean((y.d.lag1.true[3:t.idx] - lag.p(y.d.lag1, 1)[3:t.idx])^2) # RW forecast for T+1 is T 
+    #r2 <- 1 - rss / tss
+
     # 1-step-ahead forecast
-    onestepfcast <- as.numeric(y.d.lag1[names(y.d.lag1) == t]) # RW forecast for T+1 is T
-    true.value   <- as.numeric(y.d.lag1.true[(names(y.d.lag1.true) == t + 1)])
+    onestepfcast <- as.numeric(y.d.lag1[t.idx]) # RW forecast for T+1 is T
+    true.value   <- as.numeric(y.d.lag1.true[t.idx + 1])
     
     rw.i[[paste0("smpl1960to", t)]][["one-step-ahead-fcast"]] <- 
       c(fcast = onestepfcast, truth = true.value)
