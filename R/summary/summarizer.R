@@ -33,6 +33,7 @@ FCASTS.ls <- list()
 winner.mat <- matrix(0, length(countries), length(models))
 rownames(winner.mat) <- countries
 colnames(winner.mat) <- models
+sefm.winner.mat <- winner.mat[,-1]
 perf.eval <- as.data.frame(matrix(NA_real_, length(countries), 2*length(models)+1))
 models.me <- paste0(models, "_ME")
 models.mae <- paste0(models, "_MAE")
@@ -105,6 +106,9 @@ for(i in 1:length(countries)){
   # determine the winner:
   winner <- names(sort(RMSE, decreasing = FALSE, na.last = NA)[1])
   
+  # determine winner pairwisely (benchmark is SEFM)
+  sefm.winner.mat[i,] <- as.integer(RMSE["SEFM"] <= RMSE[-which(names(RMSE) == "SEFM")])
+  
   if((countries[i] %in% ols.arr) & (winner %in% c("SEFM", "OLS"))){
     
     # handling ties that can happen if SEFM = OLS
@@ -158,7 +162,7 @@ winner.overview <- rbind(winner.mat, PROPORTION.WIN = colMeans(winner.mat))
 file <- paste0(getwd(), "/R/summary/summary.xlsx")
 
 # Initial sheet
-readme <- "Here we used several models to perform 1-step ahead forecasts (expanding window). In the next tab you find a summary of the winning frequency of each model. That is, the model with the lowest RMSE across the six 1-step-ahead forecasts for 2011 to 2016."
+readme <- "Here we used several models to perform 1-step ahead forecasts (expanding window). In the next tab you find a summary of the winning frequency of each model. That is, the model with the lowest RMSE across the six 1-step-ahead forecasts for 2011 to 2016. The next tab works teh same, with the difference that it displays a pairwise comparison of the SEFM to the benchmark methods."
 
 # readme
 xlsx::write.xlsx(readme, file = file, sheetName = "README",
@@ -166,6 +170,10 @@ xlsx::write.xlsx(readme, file = file, sheetName = "README",
 
 # winners
 xlsx::write.xlsx(winner.overview, file = file, sheetName = "WINNERS",
+                 append = TRUE, row.names = TRUE, col.names = TRUE)
+
+# SEFM winners
+xlsx::write.xlsx(sefm.winner.mat, file = file, sheetName = "WINNERS-SEFM",
                  append = TRUE, row.names = TRUE, col.names = TRUE)
 
 # gradually append the spreadsheet
